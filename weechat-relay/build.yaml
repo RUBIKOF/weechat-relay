@@ -1,0 +1,7 @@
+build_from:
+  aarch64: ghcr.io/home-assistant/aarch64-base-debian:latest
+  amd64: ghcr.io/home-assistant/amd64-base-debian:latest
+
+labels:
+  org.opencontainers.image.title: "WeeChat Relay"
+  org.opencontainers.image.description: "WeeChat IRC client with relay for GlowingBear / Android"

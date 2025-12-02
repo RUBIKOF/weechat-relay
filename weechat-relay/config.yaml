@@ -1,0 +1,26 @@
+---
+name: WeeChat + Relay
+version: "0.1.0"
+slug: weechat_relay
+description: WeeChat IRC client with relay for GlowingBear / Android
+url: https://weechat.org
+arch:
+  - aarch64
+  - amd64
+startup: services
+boot: auto
+init: false
+panel_icon: mdi:console
+map:
+  - config:rw
+  - share:rw
+ports:
+  9001/tcp: 9001
+ports_description:
+  9001/tcp: WeeChat relay port (for GlowingBear / Android)
+options:
+  relay_port: 9001
+  relay_password: "cambia-esta-contraseña"
+schema:
+  relay_port: int
+  relay_password: password
