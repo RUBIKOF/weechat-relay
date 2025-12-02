@@ -3,6 +3,8 @@ name: WeeChat + Relay
 version: "0.1.0"
 slug: weechat_relay
 description: WeeChat IRC client with relay for GlowingBear / Android
+icon: icon.png
+logo: icon.png
 url: https://weechat.org
 arch:
   - aarch64
