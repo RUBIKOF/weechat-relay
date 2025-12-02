@@ -29,4 +29,4 @@ fi
 export WEECHAT_HOME="${CONFIG_DIR}"
 
 echo "[INFO] Starting WeeChat..."
-exec weechat -d "${CONFIG_DIR}"
+exec weechat -d "${CONFIG_DIR}" --no-terminal
