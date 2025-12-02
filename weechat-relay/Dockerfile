@@ -8,3 +8,5 @@ RUN apt-get update  && apt-get install -y --no-install-recommends       weechat-
 RUN mkdir -p /data/weechat
 
 COPY rootfs/ /
+
+RUN chmod +x /etc/services.d/weechat/run
