@@ -1,10 +1,39 @@
 #!/command/with-contenv bash
-set -ex
+set -e
 
-# Crear carpeta de configuración
-mkdir -p /config/weechat
+CONFIG_DIR="/config/weechat"
+OPTIONS_FILE="/data/options.json"
 
-echo "[INFO] DEBUG MODE - El contenedor no se cerrará"
+mkdir -p "${CONFIG_DIR}"
+chmod -R 777 "${CONFIG_DIR}"
 
-# Mantener contenedor vivo
-tail -f /dev/null
+echo "[INFO] Using WeeChat config dir: ${CONFIG_DIR}"
+
+RELAY_PORT=$(jq -r '.relay_port' "${OPTIONS_FILE}")
+if [ -z "${RELAY_PORT}" ] || [ "${RELAY_PORT}" = "null" ]; then
+  RELAY_PORT=9001
+fi
+
+RELAY_PASSWORD=$(jq -r '.relay_password' "${OPTIONS_FILE}")
+if [ -z "${RELAY_PASSWORD}" ] || [ "${RELAY_PASSWORD}" = "null" ]; then
+  RELAY_PASSWORD="cambia-esta-contraseña"
+fi
+
+echo "[INFO] Relay port: ${RELAY_PORT}"
+
+# Crear config mínima de relay si no existe
+if [ ! -f "${CONFIG_DIR}/relay.conf" ]; then
+  echo "[INFO] Creating relay.conf with password and port"
+  cat <<EOF > "${CONFIG_DIR}/relay.conf"
+[relay]
+network.password = "${RELAY_PASSWORD}"
+network.bind_address = "0.0.0.0"
+network.port = ${RELAY_PORT}
+EOF
+fi
+
+echo "[INFO] Starting WeeChat daemon..."
+weechat --daemon -d "${CONFIG_DIR}"
+
+echo "[INFO] WeeChat daemon started, keeping container alive..."
+exec tail -f /dev/null
