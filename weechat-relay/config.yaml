@@ -22,7 +22,7 @@ ports_description:
   9001/tcp: WeeChat relay port (for GlowingBear / Android)
 options:
   relay_port: 9001
-  relay_password: "cambia-esta-contraseña"
+  relay_password: "hassio"
 schema:
   relay_port: int
   relay_password: password
