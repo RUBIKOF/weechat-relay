@@ -4,11 +4,18 @@ FROM ${BUILD_FROM}
 ENV LANG=C.UTF-8
 ENV TERM=xterm
 
+# Instalar WeeChat en Alpine
 RUN apk add --no-cache \
       weechat \
       ca-certificates \
       jq
 
-COPY rootfs/ /
-
-RUN chmod +x /etc/services.d/weechat/run
+# Script de arranque simple
+CMD ["/bin/sh", "-c", "\
+  mkdir -p /config/weechat && \
+  chmod -R 777 /config/weechat && \
+  echo \"[INFO] Starting WeeChat daemon...\" && \
+  weechat --daemon -d /config/weechat && \
+  echo \"[INFO] WeeChat started, keeping container alive...\" && \
+  tail -f /dev/null \
+"]
