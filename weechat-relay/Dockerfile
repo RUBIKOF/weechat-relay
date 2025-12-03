@@ -5,17 +5,24 @@ FROM ${BUILD_FROM}
 ENV LANG=C.UTF-8
 ENV TERM=xterm
 
-# Instalamos WeeChat (headless) + plugins + utilidades
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-      weechat-headless \
-      weechat-plugins \
+# Instalamos Perl, compilación y utilidades en Alpine
+RUN apk add --no-cache \
+      perl \
+      perl-utils \
+      make \
+      g++ \
+      openssl-dev \
+      postgresql-dev \
       ca-certificates \
+      curl \
       jq \
- && rm -rf /var/lib/apt/lists/*
+  && curl -L https://cpanmin.us -o /usr/local/bin/cpanm \
+  && chmod +x /usr/local/bin/cpanm \
+  && /usr/local/bin/cpanm --notest Convos \
+  && rm -rf /root/.cpanm /root/.cpan
 
-# Copiamos rootfs del add-on dentro del contenedor
+# Copiamos rootfs dentro del contenedor
 COPY rootfs/ /
 
-# Nos aseguramos de que el script de servicio sea ejecutable
-RUN chmod +x /etc/services.d/weechat/run
+# Aseguramos permisos de ejecución en el servicio
+RUN chmod +x /etc/services.d/convos/run
