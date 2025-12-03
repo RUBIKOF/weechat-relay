@@ -2,20 +2,14 @@ ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
 ENV LANG=C.UTF-8
-ENV TERM=xterm
+ENV TERM=xterm-256color
 
-# Instalar WeeChat en Alpine
+# Instalar WeeChat y herramientas necesarias en Alpine
 RUN apk add --no-cache \
       weechat \
+      ncurses-terminfo-base \
       ca-certificates \
       jq
 
-# Arranque simple: crea config, lanza weechat como daemon y mantiene el contenedor vivo
-CMD ["/bin/sh", "-c", "\
-  mkdir -p /config/weechat && \
-  chmod -R 777 /config/weechat && \
-  echo '[INFO] Starting WeeChat daemon...' && \
-  TERM=xterm weechat --daemon -d /config/weechat && \
-  echo '[INFO] WeeChat started, keeping container alive...' && \
-  tail -f /dev/null \
-"]
+# Copiamos los servicios s6 (nuestro script de arranque)
+COPY rootfs/ /
