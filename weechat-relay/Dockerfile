@@ -1,23 +1,21 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
-# Configuración de entorno
+# Entorno básico
 ENV LANG=C.UTF-8
 ENV TERM=xterm
 
-# Instalación de WeeChat + plugin relay + jq
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      weechat-curses \
+# Instalamos WeeChat (headless) + plugins + utilidades
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      weechat-headless \
       weechat-plugins \
       ca-certificates \
       jq \
  && rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de configuración interno
-RUN mkdir -p /data/weechat
-
-# Copiar rootfs del add-on
+# Copiamos rootfs del add-on dentro del contenedor
 COPY rootfs/ /
 
-# Dar permisos al script de inicio
+# Nos aseguramos de que el script de servicio sea ejecutable
 RUN chmod +x /etc/services.d/weechat/run
