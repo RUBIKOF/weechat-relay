@@ -6,7 +6,6 @@ ENV TERM=xterm
 
 RUN apk add --no-cache \
       weechat \
-      weechat-plugins \
       ca-certificates \
       jq
 
