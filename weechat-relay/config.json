@@ -1,11 +1,12 @@
 {
   "name": "WeeChat Relay (Headless)",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "slug": "weechat_relay",
   "description": "WeeChat en modo servidor (relay) para usar con GlowingBear o apps Android.",
   "url": "https://weechat.org",
   "startup": "services",
   "boot": "auto",
+  "init": false,
   "arch": [
     "aarch64",
     "amd64"
