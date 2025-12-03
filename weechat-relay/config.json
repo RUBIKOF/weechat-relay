@@ -1,8 +1,8 @@
 {
-  "name": "WeeChat + Relay (Headless)",
+  "name": "WeeChat Relay (Headless)",
   "version": "0.1.0",
   "slug": "weechat_relay",
-  "description": "Cliente IRC WeeChat en modo headless con Relay para GlowingBear / Android.",
+  "description": "WeeChat en modo servidor (relay) para usar con GlowingBear o apps Android.",
   "url": "https://weechat.org",
   "startup": "services",
   "boot": "auto",
@@ -17,9 +17,8 @@
     "9001/tcp": 9001
   },
   "ports_description": {
-    "9001/tcp": "Puerto del Relay de WeeChat"
+    "9001/tcp": "Puerto del relay de WeeChat"
   },
-
   "options": {
     "relay_port": 9001,
     "relay_password": "cambia-esta-contraseña"
@@ -28,7 +27,6 @@
     "relay_port": "int",
     "relay_password": "password"
   },
-
   "icon": "icon.png",
   "logo": "icon.png",
   "panel_icon": "mdi:chat"
