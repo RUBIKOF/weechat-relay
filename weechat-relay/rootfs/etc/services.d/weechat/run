@@ -1,11 +1,24 @@
 #!/command/with-contenv bash
 set -e
 
-CONFIG_DIR="/data/weechat"
+CONFIG_DIR="/config/weechat"
 
-mkdir -p "${CONFIG_DIR}"
+mkdir -p "$CONFIG_DIR"
+chmod -R 777 "$CONFIG_DIR"
 
-echo "[INFO] WeeChat config dir: ${CONFIG_DIR}"
-echo "[INFO] Starting WeeChat (daemon, no terminal)..."
+echo "[INFO] Using config dir: $CONFIG_DIR"
 
-exec weechat -d "${CONFIG_DIR}" --no-terminalexec weechat -d "${CONFIG_DIR}" --no-terminal
+# Si no existe una configuración inicial → crear una mínima que NO cargue plugins
+if [ ! -f "$CONFIG_DIR/weechat.conf" ]; then
+    echo "[INFO] Creating minimal config for first start"
+
+    # Creamos un weechat.conf vacío con lo básico para evitar crash
+    cat <<EOF > "$CONFIG_DIR/weechat.conf"
+[core]
+weechat.look.save_config_on_exit = on
+EOF
+fi
+
+# Ejecutar WeeChat sin terminal y en modo daemon
+echo "[INFO] Starting WeeChat daemon..."
+exec weechat -d "$CONFIG_DIR" --no-terminal
