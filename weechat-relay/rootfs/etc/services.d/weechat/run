@@ -6,14 +6,16 @@ OPTIONS_FILE="/data/options.json"
 
 mkdir -p "${CONFIG_DIR}"
 
-RELAY_PORT=$(jq -r '.relay_port' "${OPTIONS_FILE}")
-RELAY_PASSWORD=$(jq -r '.relay_password' "${OPTIONS_FILE}")
+RELAY_PORT=$(jq -r '.relay_port' ${OPTIONS_FILE})
+RELAY_PASSWORD=$(jq -r '.relay_password' ${OPTIONS_FILE})
 
-echo "[INFO] Using relay port: ${RELAY_PORT}"
 echo "[INFO] WeeChat config dir: ${CONFIG_DIR}"
+echo "[INFO] Relay port: ${RELAY_PORT}"
 
-# Siempre aseguramos configuración y relay en cada arranque
-weechat -d "${CONFIG_DIR}" --no-terminal -r "
+# Crear archivo de comandos para bootstrap
+BOOTSTRAP_CMDS="${CONFIG_DIR}/bootstrap.weechat"
+
+cat > "${BOOTSTRAP_CMDS}" <<EOF
 /plugin load relay
 /set irc.server_default.charset_decode iso-8859-1
 /set irc.server_default.charset_encode iso-8859-1
@@ -22,9 +24,14 @@ weechat -d "${CONFIG_DIR}" --no-terminal -r "
 /set relay.network.port ${RELAY_PORT}
 /relay add weechat 0.0.0.0/${RELAY_PORT}
 /save
-/quit"
+/quit
+EOF
 
-export WEECHAT_HOME=\"${CONFIG_DIR}\"
+# Solo ejecutar bootstrap si no existe configuración previa
+if [ ! -f "${CONFIG_DIR}/weechat.conf" ]; then
+    echo "[INFO] First run detected — bootstrapping configuration"
+    weechat -d "${CONFIG_DIR}" --no-terminal -r "/input eval ${BOOTSTRAP_CMDS}"
+fi
 
-echo \"[INFO] Starting WeeChat...\"
-exec weechat -d \"${CONFIG_DIR}\" --no-terminal
+echo "[INFO] Starting WeeChat daemon..."
+exec weechat -d "${CONFIG_DIR}" --no-terminal
