@@ -1,0 +1,32 @@
+#!/command/with-contenv bash
+set -e
+
+CONFIG_DIR="/config/weechat"
+OPTIONS_FILE="/data/options.json"
+
+mkdir -p "${CONFIG_DIR}"
+
+# Leer opciones del add-on
+RELAY_PORT=$(jq -r '.relay_port // 9001' "${OPTIONS_FILE}")
+RELAY_PASSWORD=$(jq -r '.relay_password // "cambia-esta-contraseña"' "${OPTIONS_FILE}")
+
+echo "[INFO] WeeChat config dir: ${CONFIG_DIR}"
+echo "[INFO] Relay port: ${RELAY_PORT}"
+
+# Primer arranque: generar config y activar relay
+if [ ! -f "${CONFIG_DIR}/weechat.conf" ]; then
+  echo "[INFO] First start: generating WeeChat config and enabling relay..."
+
+  weechat -d "${CONFIG_DIR}" --no-color --no-connect -r "
+/set relay.network.password ${RELAY_PASSWORD}
+/set relay.network.bind_address 0.0.0.0
+/set relay.network.port ${RELAY_PORT}
+/relay add weechat 0.0.0.0/${RELAY_PORT}
+/save
+/quit"
+fi
+
+export WEECHAT_HOME="${CONFIG_DIR}"
+
+echo "[INFO] Starting WeeChat relay daemon..."
+exec weechat -d "${CONFIG_DIR}" --no-color --no-connect -r "/relay add weechat 0.0.0.0/${RELAY_PORT}"
