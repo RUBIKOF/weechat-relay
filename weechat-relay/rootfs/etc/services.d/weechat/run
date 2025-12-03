@@ -1,38 +1,10 @@
 #!/command/with-contenv bash
-set -e
+set -ex
 
-CONFIG_DIR="/config/weechat"
-OPTIONS_FILE="/data/options.json"
+# Crear carpeta de configuración
+mkdir -p /config/weechat
 
-mkdir -p "${CONFIG_DIR}"
-chmod -R 777 "${CONFIG_DIR}"
+echo "[INFO] DEBUG MODE - El contenedor no se cerrará"
 
-echo "[INFO] Using config dir: ${CONFIG_DIR}"
-
-# --- Leer opciones del add-on ---
-RELAY_PORT=$(jq -r '.relay_port' "${OPTIONS_FILE}")
-RELAY_PASSWORD=$(jq -r '.relay_password' "${OPTIONS_FILE}")
-
-echo "[INFO] Relay port from options: ${RELAY_PORT}"
-
-# --- Crear config mínima si no existe ---
-if [ ! -f "${CONFIG_DIR}/weechat.conf" ]; then
-    echo "[INFO] First start: creating minimum config"
-
-    cat <<EOF > "${CONFIG_DIR}/weechat.conf"
-[plugin]
-autoload = ""
-EOF
-
-    cat <<EOF > "${CONFIG_DIR}/relay.conf"
-[relay]
-network.password = "${RELAY_PASSWORD}"
-network.bind_address = "0.0.0.0"
-network.port = ${RELAY_PORT}
-EOF
-fi
-
-echo "[INFO] Launching WeeChat HEADLESS..."
-
-# --- INICIAR WEECHAT COMO PROCESO PID 1 ---
-exec weechat-headless -d "${CONFIG_DIR}"
+# Mantener contenedor vivo
+tail -f /dev/null
