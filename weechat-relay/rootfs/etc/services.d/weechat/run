@@ -8,17 +8,34 @@ chmod -R 777 "$CONFIG_DIR"
 
 echo "[INFO] Using config dir: $CONFIG_DIR"
 
-# Si no existe una configuración inicial → crear una mínima que NO cargue plugins
+# Primera inicialización: crear configuración mínima + desactivar plugins
 if [ ! -f "$CONFIG_DIR/weechat.conf" ]; then
     echo "[INFO] Creating minimal config for first start"
 
-    # Creamos un weechat.conf vacío con lo básico para evitar crash
+    mkdir -p "$CONFIG_DIR"
+
     cat <<EOF > "$CONFIG_DIR/weechat.conf"
-[core]
-weechat.look.save_config_on_exit = on
+[plugin]
+autoload = ""
+EOF
+
+    cat <<EOF > "$CONFIG_DIR/plugins.conf"
+[desc]
+autoload = "off"
+
+[plug]
+fifo = off
+logger = off
+irc = off
+xfer = off
+exec = off
+charset = off
+trigger = off
+fset = off
+spell = off
+relay = on
 EOF
 fi
 
-# Ejecutar WeeChat sin terminal y en modo daemon
-echo "[INFO] Starting WeeChat daemon..."
+echo "[INFO] Starting WeeChat daemon with plugins disabled..."
 exec weechat -d "$CONFIG_DIR" --no-terminal
