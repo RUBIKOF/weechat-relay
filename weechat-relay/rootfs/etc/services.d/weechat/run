@@ -12,10 +12,11 @@ RELAY_PASSWORD=$(jq -r '.relay_password' "${OPTIONS_FILE}")
 echo "[INFO] Using relay port: ${RELAY_PORT}"
 echo "[INFO] WeeChat config dir: ${CONFIG_DIR}"
 
+# Primer inicio: generar configuración
 if [ ! -f "${CONFIG_DIR}/weechat.conf" ]; then
   echo "[INFO] First start: generating WeeChat config with ISO-8859-1 and relay"
 
-  weechat -d "${CONFIG_DIR}" -r "
+  weechat -d "${CONFIG_DIR}" --no-terminal -r "
 /set irc.server_default.charset_decode iso-8859-1
 /set irc.server_default.charset_encode iso-8859-1
 /set relay.network.password ${RELAY_PASSWORD}
@@ -29,4 +30,6 @@ fi
 export WEECHAT_HOME="${CONFIG_DIR}"
 
 echo "[INFO] Starting WeeChat..."
+
+# 🚀 MODO CORRECTO PARA HA (sin terminal)
 exec weechat -d "${CONFIG_DIR}" --no-terminal
