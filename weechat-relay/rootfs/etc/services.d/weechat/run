@@ -9,23 +9,21 @@ chmod -R 777 "${CONFIG_DIR}"
 
 echo "[INFO] Using config dir: ${CONFIG_DIR}"
 
-# Leemos ajustes del add-on
+# --- Leer opciones del add-on ---
 RELAY_PORT=$(jq -r '.relay_port' "${OPTIONS_FILE}")
 RELAY_PASSWORD=$(jq -r '.relay_password' "${OPTIONS_FILE}")
 
 echo "[INFO] Relay port from options: ${RELAY_PORT}"
 
-# Primera vez: crear config mínima + activar solo el plugin relay
+# --- Crear config mínima si no existe ---
 if [ ! -f "${CONFIG_DIR}/weechat.conf" ]; then
-    echo "[INFO] First start: creating minimal weechat.conf and relay.conf"
+    echo "[INFO] First start: creating minimum config"
 
-    # Desactivamos autoload de plugins por defecto
     cat <<EOF > "${CONFIG_DIR}/weechat.conf"
 [plugin]
 autoload = ""
 EOF
 
-    # Config del plugin relay
     cat <<EOF > "${CONFIG_DIR}/relay.conf"
 [relay]
 network.password = "${RELAY_PASSWORD}"
@@ -34,5 +32,7 @@ network.port = ${RELAY_PORT}
 EOF
 fi
 
-echo "[INFO] Starting WeeChat headless daemon..."
+echo "[INFO] Launching WeeChat HEADLESS..."
+
+# --- INICIAR WEECHAT COMO PROCESO PID 1 ---
 exec weechat-headless -d "${CONFIG_DIR}"
